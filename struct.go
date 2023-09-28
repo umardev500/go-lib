@@ -8,13 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (g *Golib) structToBson(elements reflect.Value, tags ...string) bson.D {
+func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
 	total := elements.NumField()
 	elemTypes := elements.Type()
-	tag := "bson"
-	if len(tags) > 0 {
-		tag = tags[0]
-	}
 	var out bson.D
 
 	for i := 0; i < total; i++ {
@@ -60,8 +56,12 @@ func (g *Golib) structToBson(elements reflect.Value, tags ...string) bson.D {
 	return out
 }
 
-func (g *Golib) StructToBson(from interface{}) bson.D {
+func (g *Golib) StructToBson(from interface{}, tags ...string) bson.D {
+	tag := "bson"
+	if len(tags) > 0 {
+		tag = tags[0]
+	}
 	elems := reflect.ValueOf(from).Elem()
-	out := g.structToBson(elems, "bson")
+	out := g.structToBson(elems, tag)
 	return out
 }
