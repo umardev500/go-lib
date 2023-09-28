@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
+func structToBson(elements reflect.Value, tag string) bson.D {
 	total := elements.NumField()
 	elemTypes := elements.Type()
 	var out bson.D
@@ -26,7 +26,7 @@ func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
 		if !reflect.DeepEqual(fieldZero.Interface(), fieldValue.Interface()) {
 			// check for struct
 			if fieldValue.Kind() == reflect.Struct {
-				o := g.structToBson(fieldValue, tag)
+				o := structToBson(fieldValue, tag)
 				out = append(out, primitive.E{Key: fieldTag, Value: o})
 				continue
 			}
@@ -42,7 +42,7 @@ func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
 					actualType := val.Kind()
 					// check if val is struct
 					if actualType == reflect.Struct {
-						o := g.structToBson(val, tag)
+						o := structToBson(val, tag)
 						out = append(out, primitive.E{Key: fieldTag, Value: o})
 						continue
 					}
@@ -59,12 +59,12 @@ func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
 	return out
 }
 
-func (g *Golib) StructToBson(from interface{}, tags ...string) bson.D {
+func StructToBson(from interface{}, tags ...string) bson.D {
 	tag := "bson"
 	if len(tags) > 0 {
 		tag = tags[0]
 	}
 	elems := reflect.ValueOf(from).Elem()
-	out := g.structToBson(elems, tag)
+	out := structToBson(elems, tag)
 	return out
 }
