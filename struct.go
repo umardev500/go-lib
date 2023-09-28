@@ -15,6 +15,9 @@ func (g *Golib) structToBson(elements reflect.Value, tag string) bson.D {
 
 	for i := 0; i < total; i++ {
 		field := elemTypes.Field(i)
+		if !field.IsExported() {
+			continue
+		}
 		fieldTag := strings.Split(field.Tag.Get(tag), ",")[0]
 		fieldValue := elements.Field(i)
 		fieldZero := reflect.Zero(fieldValue.Type())
