@@ -9,8 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func regStructToBson(elements reflect.Value, parentFieldTag string, result *bson.D, isUpdate bool) {
-	tag := "bson"
+func regStructToBson(elements reflect.Value, tag, parentFieldTag string, result *bson.D, isUpdate bool) {
 	total := elements.NumField()
 	elemTypes := elements.Type()
 	var out bson.D
@@ -60,7 +59,7 @@ func structToBson(elements reflect.Value, isUpdate bool, tag string) bson.D {
 		if !reflect.DeepEqual(fieldZero.Interface(), fieldValue.Interface()) {
 			// check for struct
 			if fieldValue.Kind() == reflect.Struct {
-				regStructToBson(fieldValue, fieldTag, &out, isUpdate)
+				regStructToBson(fieldValue, tag, fieldTag, &out, isUpdate)
 				continue
 			}
 
@@ -75,7 +74,7 @@ func structToBson(elements reflect.Value, isUpdate bool, tag string) bson.D {
 					actualType := val.Kind()
 					// check if val is struct
 					if actualType == reflect.Struct {
-						regStructToBson(val, fieldTag, &out, isUpdate)
+						regStructToBson(val, tag, fieldTag, &out, isUpdate)
 						continue
 					}
 					// if actual type is not struct
