@@ -1,6 +1,7 @@
 package golib
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -98,4 +99,18 @@ func StructToBson(from interface{}, isUpdate bool, tags ...string) bson.D {
 	elems := reflect.ValueOf(from).Elem()
 	out := structToBson(elems, isUpdate, tag)
 	return out
+}
+
+// ConvertStructToStruct is convert struct into another struct
+func CopyStruct(source, dest interface{}) (err error) {
+	jsonBytes, err := json.Marshal(source)
+	if err != nil {
+		return
+	}
+
+	if err = json.Unmarshal(jsonBytes, dest); err != nil {
+		return
+	}
+
+	return
 }
